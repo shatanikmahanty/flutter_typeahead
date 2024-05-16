@@ -216,7 +216,9 @@ class _SuggestionsFieldState<T> extends State<SuggestionsField<T>> {
     _resizeOnScrollTimer?.cancel();
     if (isScrolling) {
       // Scroll started
+      print('TYPEAHEAD: Scroll started');
       _resizeOnScrollTimer = Timer.periodic(_resizeOnScrollRefreshRate, (timer) {
+        print('TYPEAHEAD: Resizing');
         controller.resize();
       });
     } else {
@@ -236,6 +238,7 @@ class _SuggestionsFieldState<T> extends State<SuggestionsField<T>> {
   }
 
   void onResize() {
+    print('TYPEAHEAD: Resize callback isOpen=${controller.isOpen}');
     if (controller.isOpen) {
       link.markNeedsBuild();
     }
@@ -309,7 +312,10 @@ class _SuggestionsFieldState<T> extends State<SuggestionsField<T>> {
           link: link,
           child: ConnectorWidget(
             value: controller,
-            connect: (value) => value.$resizes.listen((_) => onResize()),
+            connect: (value) => value.$resizes.listen((_) {
+              print('TYPEAHEAD: Resize callback');
+              onResize();
+            }),
             disconnect: (value, key) => key?.cancel(),
             child: SuggestionsFieldFocusConnector<T>(
               controller: controller,
